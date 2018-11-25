@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "cstring": "cpp",
+        "array": "cpp",
+        "initializer_list": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "chrono": "cpp",
+        "limits": "cpp",
+        "valarray": "cpp"
+    }
+}

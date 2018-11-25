@@ -1,0 +1,22 @@
+inf = 4557430888798830399
+copy i = 351
+copy i = 367
+copy i = 439
+copy i = 727
+copy i = 855
+copy i = 1910
+copy i = 2983
+copy i = 6002
+copy i = 9054
+copy i = 9118
+copy i = 9878
+copy i = 10007
+copy i = 10196
+copy i = 11158
+copy i = 13908
+copy i = 19222
+copy i = 35174
+copy i = 50006
+copy i = 58966
+copy i = 159238
+

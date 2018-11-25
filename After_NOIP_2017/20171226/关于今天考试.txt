@@ -1,0 +1,320 @@
+于是今天上午有了一场愉悦的考试。
+这里只是来写总结和题解的。
+
+T1(中位数之塔)：
+链接：EZOJ_Alpha：P1018
+http://ezoi.free.ngrok.cc/problem/1018
+一道找规律题，先二分答案然后在找规律线性时间验证。
+显然先通过大小比较把输入转成0、1序列。
+规律是什么呢？如果有两个连续的0或者1，则他们会每次向中间错一格，最后谁先到中间那么答案就是谁。
+其实就是去比较距离。
+如果两者均不存在，则最下面一行一定是01间隔的，手玩一下可发现规律。
+然后我是怎么挂的呢？看出两个0上面全都是0，两个1上面全都是1，然后不会做，弃坑了。
+交了30分暴力，然后数组开小，爆零啦QAQ。
+
+然后上代码：
+
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#define debug cout
+using namespace std;
+const int maxn=1e5+1e2;
+
+int in[maxn<<1],nums[maxn<<1];
+int n,dep;
+
+inline int findcon(int pos,int tar) {
+    int l = pos , r = pos;
+    while( l > 1 && ( nums[l]!=tar || nums[l-1]!=tar) )
+        --l;
+    while( r < ( n * 2 - 1 ) && ( nums[r]!=tar || nums[r+1]!=tar ) )
+        ++r;
+    return min( pos - l , r - pos );
+}
+inline void cov(int x) {
+    for(int i=1;i<n<<1;i++)
+        nums[i] = ( in[i] >= x );
+}
+inline bool judge(int x) {
+    cov(x);
+    int dze = findcon(n,0) , don = findcon(n,1);
+    if( dze != don )
+        return dze > don;
+    return ! ( (dep + nums[n] ) & 1 );
+}
+inline int getans() {
+    int ll = 1 , rr = ( n << 1 ) - 1 , mid;
+    while( rr != ll + 1 ) {
+        mid = ( ll + rr ) >> 1;
+        if( !judge(mid) )
+            rr = mid;
+        else ll = mid;
+    }
+    return ll;
+}
+
+int main() {
+    scanf("%d",&n);
+    dep = ( n + 1 ) >> 1;
+    for(int i=1;i<n<<1;i++)
+        scanf("%d",in+i);
+    
+    printf("%d\n",getans());
+    
+    return 0;
+}
+
+T2(宝石迷阵)：
+链接：EZOJ_Alpha：P1017
+http://ezoi.free.ngrok.cc/problem/1017
+让符合某种条件的东西最多，显然拆点网络流。然而如何保证90度转角？
+考虑转了90度的两个点一定不在同一行，按行染色即可。
+考场AC。
+
+上代码：
+
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<queue>
+#define debug cout
+using namespace std;
+const int maxn=5e+3+1e2,maxm=maxn*50;
+const int inf=0x3f3f3f3f;
+
+int s[maxn],t[maxm],nxt[maxm],f[maxm];
+int dep[maxn];
+char in[55][55];
+int n,m,st,ed;
+
+inline void coredge(int from,int to,int flow) {
+	static int cnt = 1;
+	t[++cnt] = to,
+	f[cnt] = flow,
+	nxt[cnt] = s[from],
+	s[from] = cnt;
+}
+inline void addedge(int from,int to,int flow) {
+	coredge(from,to,flow);
+	coredge(to,from,0);
+}
+
+inline bool bfs() {
+	memset(dep,-1,sizeof(dep));
+	dep[st] = 0;
+	queue<int> q;
+	q.push(st);
+	while( q.size() ) {
+		const int pos = q.front(); q.pop();
+		for(int at=s[pos];at;at=nxt[at])
+			if( f[at] && !~dep[t[at]] ) {
+				dep[t[at]] = dep[pos] + 1;
+				q.push(t[at]);
+			}
+	}
+	return ~dep[ed];
+}
+inline int dfs(int pos,int flow) {
+	if( pos == ed )
+		return flow;
+	int ret = 0 , now = 0;
+	for(int at=s[pos];at;at=nxt[at])
+		if( f[at] && dep[t[at]] > dep[pos] ) {
+			now = dfs(t[at],min(flow,f[at]));
+			ret += now , flow -= now,
+			f[at] -= now , f[at^1] += now;
+			if( !flow )
+				return ret;
+		}
+	if( !ret )
+		dep[pos] = -1;
+	return ret;
+}
+inline int dinic() {
+	int ret = 0 , now = 0;
+	while( bfs() ) {
+		while( now = dfs(st,inf) )
+			ret += now;
+	}
+	return ret;
+}
+
+inline int cov(int xx,int yy,int sta=0) { // 0 means full point or in point , 1 means out point.
+	return ( ( xx - 1 ) * m + yy ) * 2 - 1 + sta;
+}
+inline bool judge(int xx,int yy) {
+	return xx > 0 && xx <= n && yy > 0 && yy <= m && in[xx][yy]=='.';
+}
+inline void explain() {
+	st = cov(n,m,1) + 1 , ed = cov(n,m,1) + 2;
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=m;j++)
+			if( in[i][j] == '.' && ( ( i + j ) & 1 ) ) {
+				if( i & 1 )
+					addedge(st,cov(i,j),1);
+				else
+					addedge(cov(i,j),ed,1);
+			}
+	for(int i=1;i<=n;i++)
+		for(int j=1;j<=m;j++)
+			if( in[i][j] == '.' && ! ( ( i + j ) & 1 ) ) {
+				addedge(cov(i,j,0),cov(i,j,1),1);
+				if( i & 1 ) {
+					if( judge(i-1,j) )
+						addedge(cov(i,j,1),cov(i-1,j),1);
+					if( judge(i+1,j) )
+						addedge(cov(i,j,1),cov(i+1,j),1);
+					if( judge(i,j+1) )
+						addedge(cov(i,j+1),cov(i,j,0),1);
+					if( judge(i,j-1) )
+						addedge(cov(i,j-1),cov(i,j,0),1);
+				}
+				else {
+					if( judge(i-1,j) )
+						addedge(cov(i-1,j),cov(i,j,0),1);
+					if( judge(i+1,j) )
+						addedge(cov(i+1,j),cov(i,j,0),1);
+					if( judge(i,j+1) )
+						addedge(cov(i,j,1),cov(i,j+1),1);
+					if( judge(i,j-1) )
+						addedge(cov(i,j,1),cov(i,j-1),1);
+				}
+			}
+}
+
+int main() {
+	scanf("%d%d",&n,&m);
+	for(int i=1;i<=n;i++)
+		scanf("%s",in[i]+1);
+	
+	explain();
+	
+	printf("%d\n",dinic());
+	
+	return 0;
+}
+
+T3(SiriusRen的卡牌)：
+链接：EZOJ_Alpha：P1016
+http://ezoi.free.ngrok.cc/problem/1016
+首先先Orz一发SiriusRen，线段树巨佬(狂魔？)。
+既然这样那么这道题就一定也是线段树了，考虑把一个属性a排序后枚举，那么对于ai小于now的i，我们需要在另外两个属性中选择一个更大；而ai大于now的i，我们需要两个属性均比他大。
+用线段树维护另外两个属性(x,y)的关系，对于属性a比now小的i，(x,y)形成一个递降的阶梯。对于属性a比now大的i，对
+他们的(x,y)连续取平均值形成两条线。我们对于now这个值的答案就是这些东西和(maxx,maxy)围成的面积。
+线段树维护区间赋值即可。然而需要orz一发SiriusRen的写法：通过维护区间min和max简单地实现区间赋值。
+我考场上怎么死的？推出来东西了，不会维护，最后28分暴力滚粗。
+
+最后上代码：
+
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#define lli long long int
+#define debug cout
+using namespace std;
+const int maxn=5e5+1e2;
+//New operation learnt from RYC.
+
+struct SegmentTree {
+    int l[maxn<<3],r[maxn<<3],lson[maxn<<3],rson[maxn<<3];
+    lli mxv[maxn<<3],miv[maxn<<3],sum[maxn<<3],lazy[maxn<<3];
+    int cnt;
+    
+    inline void build(int pos,int ll,int rr) {
+        l[pos] = ll , r[pos] = rr;
+        if( ll == rr )
+            return;
+        const int mid = ( ll + rr ) >> 1;
+        build(lson[pos]=++cnt,ll,mid);
+        build(rson[pos]=++cnt,mid+1,rr);
+    }
+    inline void set(int pos,lli x) {
+        mxv[pos] = miv[pos] = lazy[pos] = x;
+        sum[pos] = x * ( r[pos] - l[pos] + 1 );
+    }
+    inline void push(int pos) {
+        if( lazy[pos] ) {
+            if( lson[pos] )
+                set(lson[pos],lazy[pos]);
+            if( rson[pos] )
+                set(rson[pos],lazy[pos]);
+            lazy[pos] = 0;
+        }
+    }
+    inline void up(int pos) {
+        sum[pos] = sum[lson[pos]] + sum[rson[pos]];
+        mxv[pos] = max( mxv[lson[pos]] , mxv[rson[pos]] );
+        miv[pos] = min( miv[lson[pos]] , miv[rson[pos]] );
+    }
+    inline void update(int pos,int ll,int rr,lli x) {
+        if( rr < l[pos] || r[pos] < ll || x <= miv[pos] )
+            return;
+        if( ll <= l[pos] && r[pos] <= rr && x >= mxv[pos] ) {
+            set(pos,x);
+            return;
+        }
+        push(pos);
+        update(lson[pos],ll,rr,x);
+        update(rson[pos],ll,rr,x);
+        up(pos);
+    }
+    inline lli full() {
+        return sum[1];
+    }
+    inline lli query(int pos,int ll,int rr) {
+    	if( rr < l[pos] || r[pos] < ll )
+    		return 0;
+    	if( ll <= l[pos] && r[pos] <= rr )
+    		return sum[pos];
+    	push(pos);
+    	return query(lson[pos],ll,rr) + query(rson[pos],ll,rr);
+    }
+}st;
+
+struct Node {
+    int zz,xx,yy;
+    friend bool operator < (const Node &a,const Node &b) {
+        return a.zz < b.zz;
+    }
+}ns[maxn];
+
+lli zz,xx,yy,ans;
+int n;
+
+inline void init() {
+    sort(ns+1,ns+1+n);
+    st.build(st.cnt=1,1,xx);
+}
+
+inline void getans() {
+    for(int i=1;i<=n;i++)
+        st.update(1,1,ns[i].xx,ns[i].yy);
+    for(int i=zz,j=n;i;i--) {
+        while( ns[j].zz == i ) {
+            st.update(1,1,xx,ns[j].yy);
+            st.update(1,1,ns[j].xx,yy);
+            j--;
+        }
+        ans += xx * yy - st.query(1,1,xx);
+    }
+}
+
+int main() {
+    scanf("%d%lld%lld%lld",&n,&zz,&xx,&yy);
+    for(int i=1;i<=n;i++)
+        scanf("%d%d%d",&ns[i].zz,&ns[i].xx,&ns[i].yy);
+    
+    init();
+    getans();
+    
+    printf("%lld\n",ans);
+    
+    return 0;
+}
+
+最后关于为什么我管这个OJ叫EZOJ_Alpha？
+因为我曾经建立过一个局域网专用的基于HUSTOJ的EZOJ，上面有200+题，1k+评测记录，然后被我不小心rm -rf /*了......

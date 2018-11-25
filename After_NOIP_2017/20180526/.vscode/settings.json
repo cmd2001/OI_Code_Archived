@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "array": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp",
+        "algorithm": "cpp",
+        "*.tcc": "cpp",
+        "forward_list": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "fstream": "cpp",
+        "functional": "cpp",
+        "future": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "vector": "cpp",
+        "shared_mutex": "cpp",
+        "sstream": "cpp",
+        "streambuf": "cpp",
+        "thread": "cpp",
+        "tuple": "cpp",
+        "valarray": "cpp"
+    }
+}

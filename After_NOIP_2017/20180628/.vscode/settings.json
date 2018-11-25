@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "array": "cpp",
+        "string_view": "cpp",
+        "ostream": "cpp",
+        "iostream": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "chrono": "cpp",
+        "limits": "cpp",
+        "algorithm": "cpp",
+        "cstdio": "cpp"
+    }
+}

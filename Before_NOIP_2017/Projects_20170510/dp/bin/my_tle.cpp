@@ -1,0 +1,120 @@
+#include<bits/stdc++.h>
+#define lli long long int
+#define debug cout
+#define lowbit(x) (x&(-x))
+using namespace std;
+const int maxn=5e4+1e2;
+int tme[maxn],cnt,cpi;
+lli dat[maxn],in[maxn],bas[maxn],phi[100];
+lli n,m,p,c;
+bool isend[maxn];
+lli fastpow(lli x,lli tme,lli mod,bool &abo)
+{
+    abo=0;
+    lli ret=1,now=x%mod;
+    while(tme)
+    {
+        if(tme&1)
+        {
+            ret=ret*now;
+            if(ret>mod) ret%=mod,abo=1;
+        }
+        now=now*now;
+        if(now>mod) now%=mod,abo=1;
+        tme>>=1;
+    }
+    return ret%mod;
+}
+lli cal_phi(lli x)
+{
+    if(!x) return 0;
+    if(x==1) return 1;
+    lli ret=x;
+    for(lli i=2;i*i<=x;i++)
+    {
+        if(!(x%i)) ret/=i,ret*=(i-1);
+        while(!(x%i)) x/=i;
+    }
+    if(x>1) ret/=x,ret*=(x-1);
+    return ret;
+}
+
+void getphi(lli base)
+{
+    while((phi[cpi++]=base)!=1) base=cal_phi(base);
+    phi[cpi]=1;
+    phi[++cpi]=1;
+}
+lli solve(int pos,int dpt,int modd,bool &labo)
+{
+    if(!dpt) return in[pos];
+    bool myabo;
+    lli tmp=solve(pos,dpt-1,modd+1,myabo);
+    if(tmp>=phi[modd+1]||myabo) return fastpow(c,tmp%phi[modd+1]+phi[modd+1],phi[modd],labo);
+    return fastpow(c,tmp,phi[modd],labo);
+}
+
+void core_update(int pos,lli x)
+{
+    while(pos<=n)
+    {
+        dat[pos]+=x;
+        pos+=lowbit(pos);
+    }
+}
+lli core_query(int pos)
+{
+    lli ret=0;
+    while(pos)
+    {
+        ret+=dat[pos];
+        ret%=p;
+        pos-=lowbit(pos);
+    }
+    return ret;
+}
+void update(int l,int r)
+{
+    lli tmp;
+    bool nu;
+    for(int i=l;i<=r;i++)
+    {
+        if(isend[i]) continue;
+        if(tme[i]+1>cpi) {isend[i]=1;continue;}
+        tmp=solve(i,++tme[i],0,nu);
+        //if(tmp==bas[i]) {isend[i]=1;continue;}
+        core_update(i,-bas[i]);
+        core_update(i,tmp);
+        bas[i]=tmp;
+    }
+}
+lli query(int l,int r)
+{
+    return (core_query(r)-core_query(l-1)+p)%p;
+}
+void init()
+{
+    for(int i=1;i<=n;i++)
+    {
+        bas[i]=in[i];
+        core_update(i,in[i]);
+    }
+}
+int main()
+{
+    freopen("data.in","r",stdin);
+    freopen("my.out","w",stdout);
+    scanf("%lld%lld%lld%lld",&n,&m,&p,&c);
+    getphi(p);
+    for(int i=1;i<=n;i++) scanf("%lld",&in[i]);
+    init();
+    for(int i=1,q,a,b;i<=m;i++)
+    {
+        scanf("%d%d%d",&q,&a,&b);
+        if(!q) update(a,b);
+        else printf("%lld\n",query(a,b));
+    }
+    fclose(stdin);
+    fclose(stdout);
+    return 0;
+}

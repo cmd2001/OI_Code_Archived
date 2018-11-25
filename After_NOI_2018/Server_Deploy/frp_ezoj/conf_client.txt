@@ -1,0 +1,13 @@
+[Unit]
+Description=frpc daemon
+After=network.target syslog.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/sjzez/Frp_Deploy/frpc -c /home/sjzez/Frp_Deploy/frpc.ini
+Restart=always
+RestartSec=1min
+
+[Install]
+WantedBy=multi-user.target

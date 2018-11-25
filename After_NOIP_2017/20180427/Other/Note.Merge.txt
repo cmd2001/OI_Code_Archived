@@ -1,0 +1,3 @@
+2018.04.27:
+数位DP注意初始化的时候不要访问负数下标！这样Windows下没问题Linux下又WA又T又RE花式爆炸。( for(int count=0;count<=lim;count++) f[count][0]+=f[count-1][i]; )
+maxn和maxe打反第二次get。

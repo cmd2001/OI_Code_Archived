@@ -1,0 +1,572 @@
+OI:
+hash
+KMP/exKMP
+trie /AC自动机
+Manacher
+----------------------
+
+后缀数组 & 后缀自动机
+
+C++ char s[];
+scanf("%s",s+1);
+
+7
+aabbabd
+1234567
+pre[x] s[1..x]
+suf[x] s[x..len]
+
+s[l..r]
+suf[l]  r-l+1
+
+后缀树某个节点代表字符串出现次数
+= 后缀树中该节点子树中后缀节点(结束节点)个数
+
+
+         sa  height
+aaab     4   0       B
+aab      5   2       A
+aabaaab  1   3       A
+ab       6   1       B
+abaaab   2   2       A
+b        7   0
+baaab    3   1
+
+
+
+
+子串： 后缀的前缀
+
+
+
+2
+
+
+
+
+
+sa 4,5,1,6,2,7,3  suffix array
+
+暴力： hash+二分
+asfsfsafsafs
+asfsffsfsdfsdsff
+LCP  hash+二分 O(log n)
+cmp
+
+sa 1,2,3,4,5,6,7
+sort(sa+1,sa+n+1,cmp);
+
+O(nlog^2 n)
+
+O(n) DC3
+
+O(nlogn) 倍增
+
+aabaaaab
+
+1 2 4 8 ... 
+log
+
+基数排序 radix 
+123122
+123131
+134242
+233121
+313111
+
+“稳定”的排序：相等的元素相对顺序不变
+
+不是桶排序
+(1,1) 1
+(1,2) 2
+(2,0) 3
+(2,1) 4
+1-n
+
+(1,1) 1
+(1,2) 2
+(1,3) 3 
+(1,4) 4
+(2,0) 5 
+(2,1) 6
+(3,0) 7
+(4,1) 8
+
+     a    a    b    a    a    a    a    b
+1:   1    1    2    1    1    1    1    2
+2:   (1,1)(1,2)(2,1)(1,1)(1,1)(1,1)(1,2)(2,0)
+2:   1    2    4    1    1    1    2    3
+4:   (1,4)(2,1)(4,1)(1,1)(1,2)(1,3)(2,0)(3,0)
+4:   4    6    8    1    2    3    5    7
+
+
+nlogn
+n
+mk_sa(n,128);
+
+
+(a,b)  a第一关键字 b第二关键字
+
+
+a 1 4 2 5 3
+
+y[i] 排第i的为y[i]元素
+y[1] 1
+y[2] 3
+y[3] 5
+y[4] 2
+y[5] 4
+for(int i=1;i<=5;i++){
+	print(a[y[i]])
+}
+
+sa 数组 x[i] 的顺序
+
+y[]  x[i+k] 的顺序
+
+
+
+
+
+ 2 3 1 1 2 2
+
+y[]={3,4,1,5,6,2}
+
+nlogn
+
+sa[i] 排名为i的后缀是哪个
+
+for(int i=1;i<=n;i++){
+	print(s[sa[i]...n])
+}
+
+rank[i] : suf[i]排名多少
+
+height[i]:   LCP(sa[i],sa[i-1])
+
+
+for(int i=0;i<n;i++) rank[sa[i]]=i;
+
+	int k=0; // 当前LCP的长度
+	for(int i=0;i<n;i++){
+		if(k) k--;
+
+		//mk_sa(n+1,m)后可以省略
+		if(!rank[i]) continue;
+		int j=sa[rank[i]-1];
+		while(s[i+k]==s[j+k]) k++;
+		height[rank[i]]=k;
+	}
+O(n)
+
+abcdef'\0' 6
+mk_sa(7,128)
+
+
+
+mk_sa(n+1,m);
+
+
+RMQ: 区间最大/最小值查询
+
+O(nlogn) 预处理
+O(1) 两后缀间LCP st
+
+abcabcabc
+abc
+
+height max
+
+L,R
+LCP(L,R)
+min height[L+1..R]
+
+abcabcabc
+
+abc
+
+二分答案：
+判可行 两个串的位置大于答案
+
+for(int i=1;i<=n;i++){
+	ans+=n-i+1 - height[rank[i]];
+	ans+=n-sa[i]+1 - height[i];
+}
+
+Manacher O(n) 最长回文子串
+
+最长回文子串 hash+二分
+
+abcabcba
+abcbacba
+abcabcba#abcbacba
+
+SA hash + LCP
+
+S1#S2#S3
+
+
+A#B
+
+
+二分 log
+
+height分组，存在一组有一个来自A一个来自B就可行
+
+不二分
+
+最后一个来自B的后缀的位置，遇到A时统计答案 min
+最后一个来自A的后缀的位置，遇到B时统计答案 
+
+O(nlogn)
+
+
+O(nlogn)
+
+k = 4
+| 0 | 2 | 3 | 1 |  2 |  0 | 1
+k = 3
+| 0 | 2 3 | 1 |  2 |  0 | 1
+k = 2
+| 0 2 3 | 1   2 |  0 | 1
+k = 1
+| 0  2 3  1   2 |  0  1
+k = 0
+0  2 3  1   2   0  1
+
+k
+C(k,2) = k*(k-1)/2
+
+
+
+k = x
+k = x-1
+height[i] == x
+
+
+随着k减小， 分组不停合并， 用并查集可以维护
+
+int fa[];
+for(int i=1;i<=n;i++) fa[i]=i;
+int mx[],mn[];
+mx[i]=mn[i]=sa[i];
+vector<int> v[100000];
+for(int i=1;i<=n;i++) v[height[i]].push_back(i);
+for(int k=n;k>=0;k--){
+	// height == k
+	for(int j=0;j<v[k].size();j++){
+		int p=v[k][j];
+		// p .. p-1
+		int p2=find(p-1);
+		p=find(p);
+		fa[p]=p2;
+		mx[p2]=max(mx[p2],mx[p]);
+		mn[p2]=min(mn[p2],mn[p]);
+	}
+}
+
+
+
+
+
+
+
+A#B
+
+
+
+
+
+
+0  2 3  1   2
+A  B B  A   B
+
+
+2
+aababaa
+abaabaa
+
+aababaa#abaabaa
+8 15 7 14 6 11 1 12 4 9 2 13 5 10 3
+
+ 
+0|0| 1|1  2  2 4|1 4 4 3|0 3 3 2
+  B  A B  A  B A B A B A B A B A
+
+1  2  2 4
+B  A  B A
+2+2+2+4=10
+
+1 4 4 3
+B A B A
+4+3+4+3=14
+
+0 3 3 2
+B A B A
+3+2+3+2=10
+
+34-12 = 22
+
+B在前 A在后
+从前往后扫，维护所有扫过的B，对于每个扫到的A，计算答案
+
+height 1 5 2 4 1
+单调栈：
+ 
+3 5  8 8  8 
+
+
+AC自动机/Trie树：
+匹配一个字符串集合的所有前缀
+
+后缀自动机
+能匹配一个字符串的所有后缀
+
+一些状态是接收状态
+len： 这个状态表示最长的字符串长度
+
+1234567
+aabbabd
+
+{6}  mx:6  mn:3
+
+子串 Right集合
+a  {1,2,5}
+b  {3,4,6}
+d  {7}
+aa {2}
+ab {3,6}
+bb {4}
+ba {5}
+bd {7}
+aab{3}
+abb{4}
+bba{5}
+bab{6}
+
+...
+
+12345
+aabba
+/     {1,2,3,4,5}
+a     {1,2,5} 2
+b     {3,4}   6
+aa    {2}     3
+ab    {3}     4
+aab   {3}     4
+bb    {4}    5
+abb   {4}    5
+aabb  {4}    5
+ba    {5}    7
+bba   {5}    7
+abba  {5}    7
+aabba {5}    7
+
+aab 和ab Right集合一样，后续转移是一样的
+SAM 
+
+
+两个子串的Right集合，要么不相交，要么互相包含
+
+O(n)
+
+
+ s 子串长度l， Right集合R
+
+考虑R结尾 长度为l-1的串
+
+aabxabxaabxxxxaabxxxxaab
+
+R={3,10,15,20} l=3   aab
+R={3,6,10,15,20} l=2  ab
+               l=1
+
+aabbabd
+
+\   ok
+a   ok
+aa  ok   直接在之前整串状态添加新字符转移
+aab  还需要考虑整串状态的祖先添加新字符转移
+aabb  已经有b出边，但是Right集合不符，额外添加新节点
+aabba  
+aabbab
+aabbabd
+
+
+sfsfsfsfs x
+
+
+
+对于串S的SAM，parent树，S反串的后缀树
+
+
+aabbab  d
+
+dbabbaa
+
+SAM   O(n)
+按照parent树遍历SAM
+按照len的顺序来遍历
+
+桶排序
+
+
+Right集合大小
+
+BBAABBBAAB
+
+SAM
+
+
+Right集合大小
+
+
+每个子串某个前缀的后缀
+
+asbfsbfs
+构造SAM
+int num[]
+走所有前缀点， num[x]=1;
+// 所有前缀标记为1
+SAM parent树
+num[fa[x]]+=num[x];
+// 按照后缀关系更新
+
+后缀自动机  子序列自动机
+
+SAM Right
+
+两个自动机A B
+A能识别，B不能识别的最短串
+
+(root,root) a/b/c/d
+
+A[x] B[y]
+
+(x,y) 
+
+
+
+bbbbbb
+aaabbbbbb
+
+
+
+http://contest-hunter.org:83/contest/%E3%80%90%E5%BC%B1%E7%9C%81%E8%83%A1%E7%AD%96%E3%80%91Round%20%230/Luv%20Letter
+
+
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<queue>
+using namespace std;
+typedef long long LL;
+char s1[2005],s2[2005];
+int last[26];
+const int mod=1e9+7;
+struct zidongji{
+	int l[4005];
+	int to[4005][26];
+	int fa[4005];
+	int num[4005];
+	int c[4005];
+	int x[4005];
+	int tot,root,last;
+	void clear(){memset(to,0,sizeof to);tot=0;memset(l,0,sizeof l);memset(fa,0,sizeof fa);memset(num,0,sizeof num);}
+	void add(int w){
+		int p=last,np=++tot;
+		last=np;l[np]=l[p]+1;
+		while(p&&!to[p][w]) to[p][w]=np,p=fa[p];
+		if(!p) fa[np]=root;
+		else{
+			int q=to[p][w];
+			if(l[q]==l[p]+1) fa[np]=q;
+			else{
+				int nq=++tot;
+				l[nq]=l[p]+1;fa[nq]=fa[q];
+				memcpy(to[nq],to[q],sizeof to[q]);
+				fa[q]=fa[np]=nq;
+				while(to[p][w]==q) to[p][w]=nq,p=fa[p];
+			}
+		}
+	}
+	void mkzichuan(char s[]){
+		clear();
+		root=last=++tot;
+		int L=strlen(s+1);
+		for(int i=1;i<=L;i++) add(s[i]-'a');
+		memset(c,0,sizeof c);
+		for(int i=1;i<=tot;i++) c[l[i]]++;
+		for(int i=1;i<=L;i++) c[i]+=c[i-1];
+		for(int i=1;i<=tot;i++) x[c[l[i]]--]=i;
+		for(int i=1;i<=tot;i++) num[i]=1;
+		for(int i=tot;i>=1;i--){
+			for(int j=0;j<26;j++){
+				num[x[i]]=(num[x[i]]+num[to[x[i]][j]])%mod;
+			}
+		}
+	}
+	void mkzixulie(char s[]){
+	    static int last[26];
+	    memset(last,0,sizeof last);
+	    root=2004;
+		int L=strlen(s+1);
+		clear();
+		for(int i=0;i<26;i++) last[i]=0;
+		for(int i=L;i>=1;i--){
+			for(int j=0;j<26;j++) to[i][j]=last[j];
+			last[s[i]-'a']=i;
+		}
+		for(int i=0;i<26;i++) to[root][i]=last[i];
+		for(int i=1;i<=L;i++) num[i]=1;
+		for(int i=L;i>=1;i--){
+			for(int j=0;j<26;j++) num[i]=(num[i]+num[to[i][j]])%mod;
+		}
+	}
+}A,B;
+struct N{
+	int a,b;
+	N(int x=0,int y=0){
+		a=x,b=y;
+	}
+};
+queue<N> q;
+bool vis[4005][4005];
+int ans[4005][4005];
+int dfs(int x,int y){
+//	printf("%d %d\n",x,y);
+	if(y==0){ return A.num[x]; };
+	if(vis[x][y]) return ans[x][y];
+	else vis[x][y]=1;
+	for(int i=0;i<26;i++){
+		ans[x][y]+=dfs(A.to[x][i],B.to[y][i]);
+		if(ans[x][y]>=mod) ans[x][y]%=mod;
+	}
+	return ans[x][y];
+}
+void ask(){
+	memset(vis,0,sizeof vis);
+	memset(ans,0,sizeof ans);
+	printf("%d\n",dfs(A.root,B.root));
+	return ;
+}
+int main(){
+	scanf("%s%s",s1+1,s2+1);
+	A.mkzichuan(s1);
+	B.mkzichuan(s2);
+	ask();
+	A.mkzichuan(s1);
+	B.mkzixulie(s2);
+	ask();
+	A.mkzixulie(s1);
+	B.mkzichuan(s2);
+	ask();
+	A.mkzixulie(s1);
+	B.mkzixulie(s2);
+	ask();
+	
+	return 0;
+}
+
+https://zrt.io/oi/sam/
+Right

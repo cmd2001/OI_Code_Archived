@@ -1,0 +1,26 @@
+1.install system .
+2.apt-get upgrade .
+3.change source .
+4.apt-get update && apt-get upgrade .
+5.apt-get install software-center .
+6.system update .
+7.apt-get install -f .
+8.change gedit font (ubuntu mono, courier 10 pitch) .
+9.apt-get install geany xfce4-terminal .
+10.im-config && fcitx-config-gtk3 .
+11.reboot and use google-Chinese input .
+12.apt-get install gnome-tweak-tool
+
+```source
+deb http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
+deb http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-security main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-updates main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-proposed main restricted universe multiverse
+deb-src http://mirrors.aliyun.com/ubuntu/ trusty-backports main restricted universe multiverse
+```
+

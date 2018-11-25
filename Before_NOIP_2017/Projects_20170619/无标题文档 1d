@@ -1,0 +1,21 @@
+ans=2
+i=1sta=80
+nowstate=0 0 1 1 0 
+last statement=1 1 1 0 0 
+
+
+ans=1061109569
+i=3sta=336
+nowstate=0 0 1 1 1 
+last statement=0 1 1 0 2 
+
+
+ans=1061109568
+i=2sta=532
+nowstate=0 1 1 0 2 
+last statement=0 0 1 1 0 
+
+ans=2
+i=1sta=80
+nowstate=0 0 1 1 0 
+last statement=1 1 1 0 0 

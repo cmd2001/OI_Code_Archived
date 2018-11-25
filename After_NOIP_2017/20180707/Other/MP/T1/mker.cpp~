@@ -1,0 +1,16 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+inline int _(int r=100000000) {
+    return rand() % r + 1;
+}
+
+int main() {
+    srand((unsigned long long)new char);
+    static int n = 10000 , m = 10000;
+    printf("%d %d\n",n,m);
+    while(n--) x = _() , printf("%d %d\n",x,x+32);
+    while(m--) x = _() , printf("%d %d %d\n",_(),_(),_(1000000));
+    return 0;
+}
+

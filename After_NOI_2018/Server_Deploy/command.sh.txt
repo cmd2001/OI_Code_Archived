@@ -1,0 +1,5 @@
+firewall-cmd --add-port=2334/tcp --permanent
+firewall-cmd --add-port=80/tcp --permanent
+firewall-cmd --add-port=8080/tcp --permanent
+firewall-cmd --add-port=2222/tcp --permanent
+firewall-cmd --reload

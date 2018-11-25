@@ -1,0 +1,16 @@
+{
+    "files.associations": {
+        "limits": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp",
+        "array": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp",
+        "list": "cpp",
+        "unordered_set": "cpp"
+    }
+}

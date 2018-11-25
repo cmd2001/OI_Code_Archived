@@ -1,0 +1,3 @@
+2018.06.19:
+树状数组查询别写return pos。
+ans=seq[i]别写成ans=i。
